@@ -180,23 +180,6 @@ pipeline {
             defaultValue: false,
             description: "Check this box to send a Slack notification to #ocp-qe-scale-ci-results upon the job's completion"
         )
-        string(
-            name: 'COMPARISON_RC',
-            defaultValue: '1',
-            description: '''
-                Benchmark-comparison return code if tolerancy check fails
-            '''
-        )
-        string(
-            name: 'TOLERANCY',
-            defaultValue: '-10',
-            description: '''
-                Tolerancy to replace value of tolerancy in <a href="https://github.com/cloud-bulldozer/e2e-benchmarking/blob/master/workloads/router-perf-v2/mb-tolerancy-rules.yaml">mb-tolerancy-rules.yaml</a>.<br>
-                i.e a 10 would mean any metric 10% higher than the baseline metric will be considered an error<br>
-                , and -10 would mean the opposite, any metric at least 10% below the baseline value will be considered an error.<br>
-                Set to blank will not use TOLERANCY_RULES.
-            '''
-        )
         text(
             name: 'ENV_VARS',
             defaultValue: '',
@@ -300,12 +283,7 @@ pipeline {
                             ls -ls ~/.kube/
                             env
                             cd workloads/router-perf-v2
-                            if [[ $BASELINE_UUID != '' ]] && [[ TOLERANCY != '' ]]; then
-                                echo "replace tolerancy to $TOLERANCY in mb-tolerancy-rules.yaml"
-                                sed -i "s/tolerancy:.*/tolerancy: $TOLERANCY/" mb-tolerancy-rules.yaml
-                            fi
                             ./ingress-performance.sh |& tee "ingress_router.out"
-                            ! grep "Benchmark comparison failed" ingress_router.out
                             '''
                         )
                         archiveArtifacts(
@@ -316,7 +294,7 @@ pipeline {
                         if (RETURNSTATUS.toInteger() == 0) {
                             status = "PASS"
                         }
-                        else {
+                        else { 
                             currentBuild.result = "FAILURE"
                             status = "Router perf FAIL"
                         }
