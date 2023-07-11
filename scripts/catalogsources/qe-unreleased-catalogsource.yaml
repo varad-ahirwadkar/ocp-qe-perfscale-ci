@@ -1,7 +1,7 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  name: qe-unreleased-testing
+  name: ${CATALOG_SOURCE_NAME} #rename to qe-app-registry
   namespace: openshift-marketplace
 spec:
   displayName: NetObservUnreleasedTesting

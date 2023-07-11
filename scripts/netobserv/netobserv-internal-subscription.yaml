@@ -8,5 +8,5 @@ metadata:
 spec:
   channel: stable
   name: netobserv-operator
-  source: qe-unreleased-testing
+  source: ${CATALOG_SOURCE_NAME} #rename to qe-app-registry
   sourceNamespace: openshift-marketplace 

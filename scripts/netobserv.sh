@@ -237,13 +237,15 @@ setup_dittybopper_template() {
 delete_s3() {
   echo "====> Getting S3 Bucket Name"
   S3_BUCKET_NAME=$(/bin/bash -c 'oc extract cm/lokistack-config -n netobserv --keys=config.yaml --confirm --to=/tmp | xargs -I {} egrep bucketnames {} | cut -d: -f 2 | xargs echo -n')
-  echo "====> Got $S3_BUCKET_NAME"
-  echo "====> Deleting AWS S3 Bucket"
-  while :; do
-    aws s3 rb s3://$S3_BUCKET_NAME --force && break
-    sleep 1
-  done
-  echo "====> AWS S3 Bucket $S3_BUCKET_NAME deleted"
+  if [[ -n $S3_BUCKET_NAME ]]; then
+    echo "====> Got $S3_BUCKET_NAME"
+    echo "====> Deleting AWS S3 Bucket"
+    while :; do
+      aws s3 rb s3://$S3_BUCKET_NAME --force && break
+      sleep 1
+    done
+    echo "====> AWS S3 Bucket $S3_BUCKET_NAME deleted"
+  fi
 }
 
 delete_lokistack() {
